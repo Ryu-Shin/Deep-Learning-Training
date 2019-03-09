@@ -25,7 +25,7 @@ class Layer:
         raise UnableToUseException('Uable to use this method: Layer')
 
     def check_input_forward(self, x):
-        if type(x) == np.ndarray and x.dtype in permitted_Affine and ((x.ndim == 1 and x.size == self.num_unit) or (x.ndim == 2 and x[0].size == self.num_unit)):
+        if type(x) == np.ndarray and x.dtype in permitted_Affine and ((x.ndim, x.size) == (1, self.num_unit) or (x.ndim, x[0].size) == (2, self.num_unit)):
             return True
         else:
             return False
@@ -51,7 +51,7 @@ class Affine(Layer):
         self.x = None
         self.dW = None
         self.db = None
-        if type(W) == np.ndarray and type(b) == np.ndarray and W.dtype in permitted_Affine and b.dtype in permitted_Affine and b.ndim == 2 and b.shape[0] == 1 and W.shape[1] == b.shape[1]:
+        if (type(W), type(b)) == (np.ndarray ,np.ndarray) and W.dtype in permitted_Affine and b.dtype in permitted_Affine and b.ndim == 2 and (b.shape[0], W.shape[1]) == (1, b.shape[1]):
             self.W = W
             self.b = b
             self.num_unit = W.shape[0]

@@ -1,0 +1,2 @@
+class UnableToUseException(Exception):
+    pass

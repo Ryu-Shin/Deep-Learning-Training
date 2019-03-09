@@ -74,7 +74,7 @@ class Affine(Layer):
             self.dx = dx
             self.dW = np.dot(self.x.T, dout)
             self.db = np.sum(dout, axis=0) # axis=0 で行方向(0方向)に加算する指定をしている
-            self.db = self.db.reshape(1, -1)
+            self.db = self.reshape_input(self.db)
             return dx
         else:
             raise ValueError('The value is not permitted : backward in Affine')
@@ -145,7 +145,7 @@ class Softmax_with_loss(Layer):
             temp = np.exp(x)
             delta = 1e-10
             batch_size = x.shape[0]
-            self.loss = - np.sum(t * np.log(self.y + delta)) / batch_size
+            self.loss = - np.sum(t * np.log(self.y + delta)) / batch_size # softmax
             return self.loss
         else:
             raise ValueError('The value is not permitted : forward in Softmax_with_loss')

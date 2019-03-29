@@ -49,11 +49,21 @@ class Test_Sofmax_with_loss(unittest.TestCase):
 
     def test_forward(self):
         val_x = self.x
+        expect_y = np.array([[0.0193527833, 0.00008740841226, 0.9560748922, 0.00001764745408, 0.02446726861]])
+        actual_y = self.target.forward(val_x)
+        self.assertEqual(actual_y.shape, expect_y.shape)
+        for i in range(actual_y.shape[1]):
+            self.failUnlessAlmostEqual(actual_y[0, i],expect_y[0, i],6)
+
+#####
+
+    def test_forward_with_loss(self):
+        val_x = self.x
         val_t = self.t
         expect_loss = 9.34491903
         expect_y = np.array([[0.0193527833, 0.00008740841226, 0.9560748922, 0.00001764745408, 0.02446726861]])
         expect_t = np.array([[0, 1, 0, 0, 0]])
-        actual_loss = self.target.forward(val_x, val_t)
+        actual_loss = self.target.forward_with_loss(val_x, val_t)
         actual_y = self.target.y
         actual_t = self.target.t
         self.assertEqual(actual_y.shape, expect_y.shape)
@@ -65,13 +75,13 @@ class Test_Sofmax_with_loss(unittest.TestCase):
         self.failUnlessAlmostEqual(actual_loss, expect_loss, 5)
 
 
-    def test_forward_1d(self):
+    def test_forward_with_loss_1d(self):
         val_x = np.array([0,-5.4,3.9,-7,0.2345])
         val_t = np.array([0, 1, 0, 0, 0])
         expect_loss = 9.34491903
         expect_y = np.array([[0.0193527833, 0.00008740841226, 0.9560748922, 0.00001764745408, 0.02446726861]])
         expect_t = np.array([[0, 1, 0, 0, 0]])
-        actual_loss = self.target.forward(val_x, val_t)
+        actual_loss = self.target.forward_with_loss(val_x, val_t)
         actual_y = self.target.y
         actual_t = self.target.t
         self.assertEqual(actual_y.shape, expect_y.shape)
@@ -82,14 +92,14 @@ class Test_Sofmax_with_loss(unittest.TestCase):
             self.failUnlessAlmostEqual(actual_t[0, i],expect_t[0, i],6)
         self.failUnlessAlmostEqual(actual_loss, expect_loss, 5)
 
-    def test_forward_batch(self):
+    def test_forward_with_loss_batch(self):
         val_x = self.x_batch
         val_t = self.t_batch
         expect_loss = 4.366752363
         expect_y = np.array([[0.0193527833, 0.00008740841226, 0.9560748922, 0.00001764745408, 0.02446726861],\
          [0.0193527833, 0.00008740841226, 0.9560748922, 0.00001764745408, 0.02446726861], [0.0193527833, 0.00008740841226, 0.9560748922, 0.00001764745408, 0.02446726861]])
         expect_t = np.array([[0, 1, 0, 0, 0], [0, 0, 0, 0, 1], [0, 0, 1, 0, 0]])
-        actual_loss = self.target.forward(val_x, val_t)
+        actual_loss = self.target.forward_with_loss(val_x, val_t)
         actual_y = self.target.y
         actual_t = self.target.t
         self.assertEqual(actual_y.shape, expect_y.shape)

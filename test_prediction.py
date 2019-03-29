@@ -9,7 +9,7 @@ class Test_prediction(unittest.TestCase):
 
     def setUp(self):
         (x_train, t_train), (x_test, t_test) = \
-        load_mnist(flatten=True, normalize=True, one_hot_label=False)
+        load_mnist(flatten=True, normalize=True, one_hot_label=True)
         print(x_train.shape)
         print(t_train.shape)
         print(x_test.shape)
@@ -18,7 +18,6 @@ class Test_prediction(unittest.TestCase):
         self.label = t_train[0]
         self.xtest = x_test
         self.ttest = t_test
-        print(self.label)
         # img = img.reshape(28, 28)
         # pil_img = Image.fromarray(np.uint8(img))
         # pil_img.show()
@@ -40,9 +39,6 @@ class Test_prediction(unittest.TestCase):
         print(self.W3.shape)
         print(self.b3.shape)
 
-
-        self.t = np.array([[0, 0, 0, 0, 0, 1, 0, 0, 0, 0]])
-
         self.layer1 = Affine(self.W1, self.b1)
         self.sigmoid1 = Sigmoid(self.b1.shape[1])
         self.layer2 = Affine(self.W2, self.b2)
@@ -61,10 +57,10 @@ class Test_prediction(unittest.TestCase):
             a2 = self.layer2.forward(z1)
             z2 = self.sigmoid2.forward(a2)
             a3 = self.layer3.forward(z2)
-            loss = self.softmax_with_loss.forward(a3, self.t)
+            loss = self.softmax_with_loss.forward_with_loss(a3, self.ttest[i])
             y = self.softmax_with_loss.y
             p = np.argmax(y)
-            if p == self.ttest[i]:
+            if self.ttest[i][p] == 1:
                 accuracy_cnt += 1
         Accuracy = float(accuracy_cnt) / len(self.ttest)
         expect = 0.9352

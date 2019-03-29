@@ -38,7 +38,7 @@ class Layer:
 
 
     def reshape_input(self, x):
-        if x.ndim == 1:
+        if type(x) == np.ndarray and x.ndim == 1:
             return x.reshape(1, -1)
         else:
             return x
@@ -51,6 +51,8 @@ class Affine(Layer):
         self.x = None
         self.dW = None
         self.db = None
+        b = self.reshape_input(b)
+
         if (type(W), type(b)) == (np.ndarray ,np.ndarray) and W.dtype in permitted_Affine and b.dtype in permitted_Affine and b.ndim == 2 and (b.shape[0], W.shape[1]) == (1, b.shape[1]):
             self.W = W
             self.b = b
@@ -136,7 +138,15 @@ class Softmax_with_loss(Layer):
         self.y = None
         self.t = None
 
-    def forward(self, x, t):
+    def forward(self, x):
+        if self.check_input_forward(x):
+            x = self.reshape_input(x)
+            y = util.softmax(x)
+            return y
+        else:
+            raise ValueError('The value is not permitted : forward in Softmax_with_loss')
+
+    def forward_with_loss(self, x, t):
         if self.check_input_forward(x) and self.check_input_forward(t):
             x = self.reshape_input(x)
             t = self.reshape_input(t)
@@ -149,6 +159,7 @@ class Softmax_with_loss(Layer):
             return self.loss
         else:
             raise ValueError('The value is not permitted : forward in Softmax_with_loss')
+
     def backward(self):
         batch_size = self.y.shape[0]
         dx = (self.y-self.t) / batch_size
